@@ -10,8 +10,10 @@ const KOMAI_TEST = 'test'
 
 export default function Home() {
   const nowRef = useRef(null)
+  const [fromTheDeep, setMessage] = useState([])
   const [catImgData, setCatImgData] = useState([])
   const [input, setInput] = useState('')
+
   const [startTime, setStart] = useState(null)
   const [now, setNow] = useState(null)
 
@@ -20,8 +22,8 @@ export default function Home() {
     clearInterval(nowRef.current)
     nowRef.current = null
     setStart(null)
-    setNow(null)
     setInput('')
+    setNow(null)
   }
 
   function resetTimeout(seconds) {
@@ -56,22 +58,16 @@ export default function Home() {
 
   //Capture Key Strokes
   useEffect(() => {
-
     const keyPress = (event) => {
       if (event.key === 'Escape') {
         resetAll()
         return
       }
       setInput(prev => {
-        const newInput = prev + event.key
-        if (newInput === KOMAI_TEST) {
-
-          alert('hi')
-          resetAll()
-          return
-        }
-        resetTimeout(5)
+        //if default state, start setInterval for now
         if (nowRef.current === null) startTimeout()
+        const newInput = prev + event.key
+        resetTimeout(5)
         return newInput
       })
     }
@@ -89,6 +85,22 @@ export default function Home() {
     const time = (startTime - now) / 1000
     if (time <= 0) resetAll()
   }, [startTime, now])
+
+  //Fetch Message when Komai code is correct
+  useEffect(() => {
+    if (input !== KOMAI_TEST) return
+    resetAll()
+    fetchData()
+
+    async function fetchData() {
+      const response = await fetch('https://api.github.com/repos/elixir-lang/elixir/issues')
+      const data = await response.json()
+      const transformedData = data.map(d => {
+        return { id: d.id, created: d.created_at, updated: d.updated_at, url: d.url, title: d.title, username: d.user.login, userAvatar: d.user.avatar_url }
+      })
+      setMessage(transformedData)
+    }
+  }, [input])
 
   let time = 0
   if (startTime !== null && now !== null) time = (startTime - now) / 1000
@@ -108,7 +120,7 @@ export default function Home() {
       <Typography variant='h3' component='h1' m='24px'> Sweet Kittens</Typography>
       <Typography variant>{time.toFixed(3)}</Typography>
       <Box m='24px' style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
-        {catImgData.length > 0 && catImgData.map(({ url, link }, indx) => {
+        {catImgData.length > 0 && fromTheDeep.length === 0 && catImgData.map(({ url, link }, indx) => {
           return (
             <Link key={indx + link} href={'https://www.reddit.com' + link}>
               <Image
@@ -125,6 +137,27 @@ export default function Home() {
             </Link>
           )
         })}
+      </Box>
+      <Box>
+        {fromTheDeep.length > 0 && fromTheDeep.map(((messages, index) => {
+          console.log(messages)
+          return (
+            <Box key={index + messages.id} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', margin: '12px' }}>
+              <Image
+                src={messages.userAvatar}
+                width={75}
+                height={75}
+                alt={messages.username + ' avatar img'}
+                style={{
+                  borderRadius: '45x',
+                  objectFit: 'cover',
+                  margin: '2px'
+                }} />
+              <Typography ml='12px'>{messages.title}</Typography>
+            </Box>
+          )
+        }))
+        }
       </Box>
     </Box >
   )
