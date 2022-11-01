@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 export default function Home() {
   const [catImgData, setCatImgData] = useState([])
 
+  //Fetch Cat pictures from /r/reddit
   useEffect(() => {
     async function getData() {
       const response = await fetch('https://www.reddit.com/r/cats.json')
@@ -25,6 +26,8 @@ export default function Home() {
     }
     getData()
   }, [])
+
+
 
   return (
     <Box sx={{
