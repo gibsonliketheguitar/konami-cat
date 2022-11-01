@@ -6,9 +6,9 @@ export default function CatPictures({ data }) {
     if (data.length <= 0) return <></>
     return (
         <Box m='24px' style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {data.map(({ url, link }, indx) => {
+            {data.map(({ url, link, bonus = false }, indx) => {
                 return (
-                    <Link key={indx + link} href={'https://www.reddit.com' + link}>
+                    <Link key={indx + link} href={!bonus ? 'https://www.reddit.com' : '' + link}>
                         <Image
                             src={url}
                             width={200}

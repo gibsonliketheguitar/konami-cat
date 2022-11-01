@@ -67,6 +67,14 @@ export default function Home() {
             const end = ele.url.slice(-3)
             if (end === 'png' || end === 'jpg' || end === 'gif') return true
           })
+        const komiBonus = {
+          url: 'https://media.tenor.com/_Nmi-p_Z83AAAAAC/komi-cant-communicate-komi-san-comyushou-desu.gif',
+          link: 'https://en.wikipedia.org/wiki/Komi_Can%27t_Communicate',
+          bonus: true
+        }
+        const randIdx = Math.floor(Math.random() * catUrlAndLink.length)
+        catUrlAndLink.splice(randIdx, 0, komiBonus)
+        console.log(catUrlAndLink)
         setCatImgData(catUrlAndLink)
       }
       catch (error) {
