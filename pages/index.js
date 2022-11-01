@@ -74,7 +74,6 @@ export default function Home() {
         }
         const randIdx = Math.floor(Math.random() * catUrlAndLink.length)
         catUrlAndLink.splice(randIdx, 0, komiBonus)
-        console.log(catUrlAndLink)
         setCatImgData(catUrlAndLink)
       }
       catch (error) {
@@ -130,8 +129,8 @@ export default function Home() {
             return { id: d.id, created: d.created_at, updated: d.updated_at, url: d.url, title: d.title, username: d.user.login, userAvatar: d.user.avatar_url }
           })
           .sort((a, b) => new Date(b.created) - new Date(a.created))
-          .slice(0, 5)
-
+          .slice(0, 100)
+        console.log(transformedData)
         setMessage(_ => {
           initMCountDown(15)
           startMTimeOut()
