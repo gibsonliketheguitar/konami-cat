@@ -21,13 +21,18 @@ export default function Home() {
           const end = ele.url.slice(-3)
           if (end === 'png' || end === 'jpg' || end === 'gif') return true
         })
-      console.log(catUrlAndLink)
       setCatImgData(catUrlAndLink)
     }
     getData()
   }, [])
 
+  //Capture Key Strokes
+  useEffect(() => {
+    const keyPress = (event) => console.log(event)
 
+    window.addEventListener('keydown', keyPress)
+    return () => window.removeEventListener('keydown', keyPress)
+  }, [])
 
   return (
     <Box sx={{
@@ -44,7 +49,6 @@ export default function Home() {
       <Typography variant='h3' component='h1' m='24px'> Sweet Kittens</Typography>
       <Box m='24px' style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
         {catImgData.length > 0 && catImgData.map(({ url, link }, indx) => {
-          console.log(link)
           return (
             <Link key={indx + link} href={'https://www.reddit.com' + link}>
               <Image
@@ -54,7 +58,7 @@ export default function Home() {
                 alt={link}
                 style={{
                   borderRadius: '12px',
-                  objectFit: 'fill',
+                  objectFit: 'cover',
                   margin: '2px'
                 }}
               />
