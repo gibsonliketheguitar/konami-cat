@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 const KOMAI_KEY = 'injects3screts'
-const KOMAI_TEST = 'test'
 
 export default function Home() {
   const nowRef = useRef(null)
@@ -103,7 +102,7 @@ export default function Home() {
 
   //Fetch Message when Komai code is correct
   useEffect(() => {
-    if (input !== KOMAI_TEST || fromTheDeep.length > 0) return
+    if (input !== KOMAI_KEY || fromTheDeep.length > 0) return
     resetAll()
     fetchData()
 
