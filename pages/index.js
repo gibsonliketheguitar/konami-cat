@@ -1,9 +1,9 @@
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
-import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import Header from '../component/Header'
 
 const KONAMI_KEY = 'injects3crets'
 
@@ -161,11 +161,7 @@ export default function Home() {
       padding: '20px',
       height: '100vh',
     }}>
-      <Head>
-        <title>Sweet Kittens</title>
-        <meta name="your dedicated cat picture feed" content="Cat pictures" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Header />
       <Typography variant='h3' component='h1' m='24px'> Sweet Kittens</Typography>
       <Typography variant>{fromTheDeep.length > 0 ? mTime.toFixed(3) : time.toFixed(3)}</Typography>
       <Box m='24px' style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
