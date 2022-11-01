@@ -10,12 +10,16 @@ const KOMAI_TEST = 'test'
 
 export default function Home() {
   const nowRef = useRef(null)
+  const mNowRef = useRef(null)
   const [fromTheDeep, setMessage] = useState([])
   const [catImgData, setCatImgData] = useState([])
   const [input, setInput] = useState('')
 
   const [startTime, setStart] = useState(null)
   const [now, setNow] = useState(null)
+
+  const [mStartTime, setMStart] = useState(null)
+  const [mNow, setMNow] = useState(null)
 
 
   function resetAll() {
@@ -30,12 +34,23 @@ export default function Home() {
     setStart(seconds * 1000 + Date.now())
   }
 
+
   function startTimeout() {
     if (nowRef.current === null) {
       nowRef.current = setInterval(() => {
         setNow(Date.now())
       }, 10)
     }
+  }
+
+  function initMCountDown(seconds) {
+    setMStart(seconds * 1000 + Date.now())
+  }
+
+  function startMTimeOut() {
+    mNowRef.current = setInterval(() => {
+      setMNow(Date.now())
+    }, 10)
   }
 
   //Fetch Cat pictures from /r/reddit
@@ -88,7 +103,7 @@ export default function Home() {
 
   //Fetch Message when Komai code is correct
   useEffect(() => {
-    if (input !== KOMAI_TEST) return
+    if (input !== KOMAI_TEST || fromTheDeep.length > 0) return
     resetAll()
     fetchData()
 
@@ -101,12 +116,31 @@ export default function Home() {
         })
         .sort((a, b) => new Date(b.created) - new Date(a.created))
         .slice(0, 5)
-      setMessage(transformedData)
+
+      setMessage(_ => {
+        initMCountDown(15)
+        startMTimeOut()
+        return transformedData
+      })
+
     }
   }, [input])
 
+  useEffect(() => {
+    if (mStartTime === null || mNow === null) return
+    const time = (mStartTime - mNow) / 1000
+    if (time <= 0) {
+      clearInterval(mNowRef.current)
+      mNowRef.current = null
+      setMessage([])
+    }
+  }, [mStartTime, mNow])
+
   let time = 0
   if (startTime !== null && now !== null) time = (startTime - now) / 1000
+
+  let mTime = 0
+  if (mTime !== null && mNow !== null) mTime = (mStartTime - mNow) / 1000
 
   return (
     <Box sx={{
@@ -122,7 +156,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Typography variant='h3' component='h1' m='24px'> Sweet Kittens</Typography>
-      <Typography variant>{time.toFixed(3)}</Typography>
+      <Typography variant>{fromTheDeep.length > 0 ? mTime.toFixed(3) : time.toFixed(3)}</Typography>
       <Box m='24px' style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
         {catImgData.length > 0 && fromTheDeep.length === 0 && catImgData.map(({ url, link }, indx) => {
           return (
