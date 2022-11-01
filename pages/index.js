@@ -99,7 +99,7 @@ export default function Home() {
         .map(d => {
           return { id: d.id, created: d.created_at, updated: d.updated_at, url: d.url, title: d.title, username: d.user.login, userAvatar: d.user.avatar_url }
         })
-        .sort((a, b) => new Date(b.updated) - new Date(a.updated))
+        .sort((a, b) => new Date(b.created) - new Date(a.created))
         .slice(0, 5)
       setMessage(transformedData)
     }
@@ -144,7 +144,6 @@ export default function Home() {
       </Box>
       <Box>
         {fromTheDeep.length > 0 && fromTheDeep.map(((messages, index) => {
-          console.log(messages)
           return (
             <Box key={index + messages.id} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', margin: '12px' }}>
               <Image
