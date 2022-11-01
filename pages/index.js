@@ -95,9 +95,12 @@ export default function Home() {
     async function fetchData() {
       const response = await fetch('https://api.github.com/repos/elixir-lang/elixir/issues')
       const data = await response.json()
-      const transformedData = data.map(d => {
-        return { id: d.id, created: d.created_at, updated: d.updated_at, url: d.url, title: d.title, username: d.user.login, userAvatar: d.user.avatar_url }
-      })
+      const transformedData = data
+        .map(d => {
+          return { id: d.id, created: d.created_at, updated: d.updated_at, url: d.url, title: d.title, username: d.user.login, userAvatar: d.user.avatar_url }
+        })
+        .sort((a, b) => new Date(b.updated) - new Date(a.updated))
+        .slice(0, 5)
       setMessage(transformedData)
     }
   }, [input])
@@ -110,6 +113,7 @@ export default function Home() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      padding: '20px',
       height: '100vh',
     }}>
       <Head>
@@ -149,7 +153,7 @@ export default function Home() {
                 height={75}
                 alt={messages.username + ' avatar img'}
                 style={{
-                  borderRadius: '45x',
+                  borderRadius: '45px',
                   objectFit: 'cover',
                   margin: '2px'
                 }} />
