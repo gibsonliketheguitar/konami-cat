@@ -5,21 +5,23 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
-const KOMAI_KEY = 'injects3screts'
+const KONAMI_KEY = 'injects3crets'
 
 export default function Home() {
+  //keypress timer states
   const nowRef = useRef(null)
-  const mNowRef = useRef(null)
-  const [fromTheDeep, setMessage] = useState([])
-  const [catImgData, setCatImgData] = useState([])
-  const [input, setInput] = useState('')
-
   const [startTime, setStart] = useState(null)
   const [now, setNow] = useState(null)
 
+  //message timer states
+  const mNowRef = useRef(null)
   const [mStartTime, setMStart] = useState(null)
   const [mNow, setMNow] = useState(null)
 
+  //other states
+  const [input, setInput] = useState('')
+  const [fromTheDeep, setMessage] = useState([])
+  const [catImgData, setCatImgData] = useState([])
 
   function resetAll() {
     clearInterval(nowRef.current)
@@ -32,7 +34,6 @@ export default function Home() {
   function resetTimeout(seconds) {
     setStart(seconds * 1000 + Date.now())
   }
-
 
   function startTimeout() {
     if (nowRef.current === null) {
@@ -52,25 +53,31 @@ export default function Home() {
     }, 10)
   }
 
-  //Fetch Cat pictures from /r/reddit
+  //Fetch Cat pictures from reddit.com/r/cats
   useEffect(() => {
     async function getData() {
-      const response = await fetch('https://www.reddit.com/r/cats.json')
-      const { data } = await response.json()
-      const catUrlAndLink = data.children
-        .map(({ data }) => {
-          return { url: data?.url, link: data?.permalink }
-        })
-        .filter(ele => {
-          const end = ele.url.slice(-3)
-          if (end === 'png' || end === 'jpg' || end === 'gif') return true
-        })
-      setCatImgData(catUrlAndLink)
+      try {
+        const response = await fetch('https://www.reddit.com/r/cats.json')
+        const { data } = await response.json()
+        const catUrlAndLink = data.children
+          .map(({ data }) => {
+            return { url: data?.url, link: data?.permalink }
+          })
+          .filter(ele => {
+            const end = ele.url.slice(-3)
+            if (end === 'png' || end === 'jpg' || end === 'gif') return true
+          })
+        setCatImgData(catUrlAndLink)
+      }
+      catch (error) {
+        console.log('failed to fetch and set cat pictures')
+      }
     }
+
     getData()
   }, [])
 
-  //Capture Key Strokes
+  //Capture key strokes
   useEffect(() => {
     const keyPress = (event) => {
       if (event.key === 'Escape') {
@@ -93,38 +100,43 @@ export default function Home() {
     }
   }, [])
 
-  //Global Effect to handle keypress timeout
+  //Konami Code Input count down timer
   useEffect(() => {
     if (startTime === null || now === null) return
     const time = (startTime - now) / 1000
     if (time <= 0) resetAll()
   }, [startTime, now])
 
-  //Fetch Message when Komai code is correct
+  //Fetch Message when Konami code is correct
   useEffect(() => {
-    if (input !== KOMAI_KEY || fromTheDeep.length > 0) return
+    if (input !== KONAMI_KEY || fromTheDeep.length > 0) return
     resetAll()
     fetchData()
 
     async function fetchData() {
-      const response = await fetch('https://api.github.com/repos/elixir-lang/elixir/issues')
-      const data = await response.json()
-      const transformedData = data
-        .map(d => {
-          return { id: d.id, created: d.created_at, updated: d.updated_at, url: d.url, title: d.title, username: d.user.login, userAvatar: d.user.avatar_url }
+      try {
+        const response = await fetch('https://api.github.com/repos/elixir-lang/elixir/issues')
+        const data = await response.json()
+        const transformedData = data
+          .map(d => {
+            return { id: d.id, created: d.created_at, updated: d.updated_at, url: d.url, title: d.title, username: d.user.login, userAvatar: d.user.avatar_url }
+          })
+          .sort((a, b) => new Date(b.created) - new Date(a.created))
+          .slice(0, 5)
+
+        setMessage(_ => {
+          initMCountDown(15)
+          startMTimeOut()
+          return transformedData
         })
-        .sort((a, b) => new Date(b.created) - new Date(a.created))
-        .slice(0, 5)
-
-      setMessage(_ => {
-        initMCountDown(15)
-        startMTimeOut()
-        return transformedData
-      })
-
+      }
+      catch (error) {
+        console.log('failed to get messages from the deep and set')
+      }
     }
-  }, [input])
+  }, [input, fromTheDeep])
 
+  //Message Count Down Timer
   useEffect(() => {
     if (mStartTime === null || mNow === null) return
     const time = (mStartTime - mNow) / 1000
