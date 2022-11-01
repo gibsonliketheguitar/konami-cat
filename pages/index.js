@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import Header from '../component/Header'
+import Messages from '../component/Messages'
 
 const KONAMI_KEY = 'injects3crets'
 
@@ -183,26 +184,7 @@ export default function Home() {
           )
         })}
       </Box>
-      <Box>
-        {fromTheDeep.length > 0 && fromTheDeep.map(((messages, index) => {
-          return (
-            <Box key={index + messages.id} sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', margin: '12px' }}>
-              <Image
-                src={messages.userAvatar}
-                width={75}
-                height={75}
-                alt={messages.username + ' avatar img'}
-                style={{
-                  borderRadius: '45px',
-                  objectFit: 'cover',
-                  margin: '2px'
-                }} />
-              <Typography ml='12px'>{messages.title}</Typography>
-            </Box>
-          )
-        }))
-        }
-      </Box>
+      <Messages data={fromTheDeep} />
     </Box >
   )
 }
