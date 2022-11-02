@@ -7,8 +7,9 @@ export default function CatPictures({ data }) {
     return (
         <Box m='24px' style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
             {data.map(({ url, link, bonus = false }, indx) => {
+                const outBoundLink = !bonus ? 'https://www.reddit.com' + link : link
                 return (
-                    <Link key={indx + link} href={!bonus ? 'https://www.reddit.com' : '' + link}>
+                    <Link key={indx + link} href={outBoundLink}>
                         <Image
                             src={url}
                             width={200}

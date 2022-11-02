@@ -130,7 +130,7 @@ export default function Home() {
           })
           .sort((a, b) => new Date(b.created) - new Date(a.created))
           .slice(0, 100)
-        console.log(transformedData)
+
         setMessage(_ => {
           initMCountDown(15)
           startMTimeOut()
