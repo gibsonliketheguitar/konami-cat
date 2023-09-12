@@ -170,6 +170,7 @@ export default function Home() {
     }}>
       <Header />
       <Typography variant='h3' component='h1' m='24px'> Sweet Kittens</Typography>
+      <Typography variant='h2' component='h1' m='24px'> Type injects3crets</Typography>
       <Typography variant>{fromTheDeep.length > 0 ? mTime.toFixed(3) : time.toFixed(3)}</Typography>
       {fromTheDeep.length === 0 && <CatPictures data={catImgData} />}
       <Messages data={fromTheDeep} />
